@@ -5,10 +5,10 @@ from projectq.backends import CircuitDrawer
 import array as arr
 #Simon's periodicity algorithm
 
-aux = arr.array('i', [1,0,1]) #Definimos el valor de c para el oraculo
-n = 3 # el tamaño de c debe ser igual que n
+c = arr.array('i', [1,0,1]) #Definimos el valor de c para el oraculo
+n = 3 # size de c debe ser igual que n
 
-def runDeutsch(eng, n, oracle):
+def runSimon(eng, n, oracle):
     drawing_engine = CircuitDrawer() # Esto nos permite que se registre todo el circuito ejecutado.
     x = eng.allocate_qureg(n) #con esta instruccion instanciamos un array de qubits, x. (Entrada superior)
     y = eng.allocate_qureg(n) #con esta instruccion instanciamos un array de qubits, y. (Entrada inferior)
@@ -16,10 +16,8 @@ def runDeutsch(eng, n, oracle):
     #Aplicamos la puerta H a todos los qubits de x, dejandolos en una superposicion.
     All(H) | x
 
-    #Inicializamos c como qubit para poder usarlo en la puerta como control
-    c = eng.allocate_qureg(n)
-    initialize_c(c)
-    oracle(x,y,c)
+
+    oracle(x,y)
 
     # Volvemos a aplicar H a todos los qubits de x para retirar la superposicion.
     # En funicion del oraculo algunos pueden estar en inversion de fase y anularse entre si.
@@ -37,25 +35,29 @@ def runDeutsch(eng, n, oracle):
 
 
 #funcion generica
-def function_generica(x, y, c):
-    for i in range(len(c)):
-        X | x[i]
-        Toffoli | (x[i], c[i], y[i])
-        X | x[i]
-
-# Inicializamos c.
-def initialize_c(c):
-    for i in range(len(c)):
-        if aux[i] == 1:
-            X| c[i]
-
-
-if __name__ == "__main__":
-    eng = MainEngine()  # use default compiler engine
-    runDeutsch(eng, n, function_generica)
-    eng.flush()
-
-
+def function_generica(x, y):
+    if c[0] == 1:
+        if c[1] == 1:
+            if c[2] == 1:
+                pass
+            else
+                pass
+        else
+            if c[2] == 1:
+                pass
+            else
+                pass
+    else
+        if c[1] == 1:
+            if c[2] == 1:
+                pass
+            else
+                pass
+        else
+            if c[2] == 1:
+                pass
+            else
+                pass
 
 
 
@@ -81,3 +83,19 @@ def function_simon(x, y):
     Toffoli | (x[0], x[1], y[0])
     Toffoli | (x[0], x[2], y[1])
     Toffoli | (x[1], x[2], y[2])
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    eng = MainEngine()  # use default compiler engine
+    runSimon(eng, n, function_simon)
+    eng.flush()
+
+
